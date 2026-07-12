@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>모바일 청첩장</title>
+    <style>
+      :root {
+        --bg: #fff8f3;
+        --ink: #4d3b34;
+        --accent: #b9775b;
+        --accent-soft: #f7e3d8;
+        --line: #ebd7ca;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+        background: linear-gradient(180deg, #fff8f3 0%, #fff2e9 100%);
+        color: var(--ink);
+        display: flex;
+        justify-content: center;
+        padding: 16px;
+      }
+      .card {
+        width: min(100%, 460px);
+        background: #fffdfa;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 16px 48px rgba(0,0,0,.08);
+        border: 1px solid var(--line);
+        position: relative;
+      }
+      .hero {
+        position: relative;
+        min-height: 420px;
+      }
+      .hero img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .photo-stack {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .photo-stack img {
+        width: 100%;
+        display: block;
+        object-fit: cover;
+        height: auto;
+      }
+      .photo-item {
+        position: relative;
+      }
+      .clickable-overlay {
+        position: absolute;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .clickable-overlay:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+      }
+      .bride-btn, .groom-btn {
+        position: absolute;
+        padding: 20px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: transparent;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-content {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 24px;
+        max-width: 320px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease;
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--accent);
+      }
+      .modal-text {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+      }
+      .modal-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .account-item {
+        margin-bottom: 15px;
+      }
+      .account-text {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .account-text:last-child {
+        margin-bottom: 0;
+      }
+      .account-info {
+        flex: 1;
+      }
+      .copy-btn {
+        padding: 4px 8px;
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        margin-left: 8px;
+      }
+      .copy-btn:hover {
+        background: #a36648;
+      }
+      .modal-btn.cancel {
+        background: #f0f0f0;
+        color: #666;
+      }
+      .modal-btn.cancel:hover {
+        background: #e0e0e0;
+      }
+      .modal-btn.confirm {
+        background: var(--accent);
+        color: white;
+      }
+      .modal-btn.confirm:hover {
+        background: #a36648;
+      }
+      @media (max-width: 420px) {
+        body { padding: 0; }
+        .card { border-radius: 0; min-height: 100vh; }
+        .hero { min-height: 360px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <div class="photo-stack">
+        <img src="1.jpg" alt="청첩장 메인 이미지" />
+        <img src="2.jpg" alt="결혼식 사진 1" />
+        <div class="photo-item">
+          <img src="3.jpg" alt="결혼식 사진 2" />
+          <!-- 마음 전하기 클릭 영역 -->
+          <button class="bride-btn" onclick="openModal('bride')" style="top: 35%; left: 50%; transform: translate(10px, -50%); color: white;"></button>
+          <button class="groom-btn" onclick="openModal('groom')" style="top: 35%; left: 50%; transform: translate(-70px, -50%); color: white;"></button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 모달 팝업 -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-title" id="modalTitle">신부측 축의금</div>
+        <div id="modalText" style="max-height: 300px; overflow-y: auto; text-align: left;">
+          <!-- 계좌 정보가 여기에 동적으로 표시됩니다 -->
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-btn cancel" onclick="closeModal()">닫기</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 계좌 데이터
+      const accounts = {
+        bride: [
+          { name: '박의정', bank: '농협은행', account: '302-0713-4272-81' },
+          { name: '김상욱', bank: '국민은행', account: '612501-01-641848' },
+          { name: '박지영', bank: 'SC제일은행', account: '596-20-310629' }
+        ],
+        groom: [
+          { name: '오종철', bank: '하나은행', account: '244-910523-95207' },
+          { name: '명혜란', bank: '국민은행', account: '80524-0262-004' },
+          { name: '오광원', bank: '국민은행', account: '805901-04-084264' }
+        ]
+      };
+
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('복사되었습니다!');
+        });
+      }
+
+      function openModal(type) {
+        const modal = document.getElementById('modal');
+        const title = document.getElementById('modalTitle');
+        const text = document.getElementById('modalText');
+        
+        if (type === 'bride') {
+          title.textContent = '신부측 축의금';
+        } else if (type === 'groom') {
+          title.textContent = '신랑측 축의금';
+        }
+
+        // 계좌 정보 HTML 생성
+        text.innerHTML = accounts[type].map((acc, index) => `
+          <div class="account-item">
+            <div class="account-text">
+              <span class="account-info">${acc.name}  ${acc.bank}  ${acc.account}</span>
+              <button class="copy-btn" onclick="copyToClipboard('${acc.account}')">복사</button>
+            </div>
+          </div>
+        `).join('');
+        
+        modal.classList.add('active');
+      }
+
+      function closeModal() {
+        const modal = document.getElementById('modal');
+        modal.classList.remove('active');
+      }
+
+      // 모달 외부 클릭 시 닫기
+      document.getElementById('modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeModal();
+        }
+      });
+    </script>
+  </body>
+</html>
